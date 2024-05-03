@@ -35,6 +35,18 @@ import { TableCell, TableRow, TableBody, Table } from "@/components/ui/table"
 export function LoginDash() {
   return (
     <div className="flex flex-col min-h-screen">
+      <header className="bg-[#F58025] text-white px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-50">
+        <div className="flex items-center gap-4">
+          <FlagIcon className="h-6 w-6 text-white" />
+          <h1 className="text-xl font-semibold text-white">Company Realtime Testing</h1>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button className="rounded-full" size="icon" variant="ghost">
+            <CircleHelpIcon className="h-6 w-6 text-white" />
+            <span className="sr-only">Help</span>
+          </Button>
+        </div>
+      </header>
       <div className="flex flex-col justify-center items-center h-screen bg-[rgb(20,27,45)]">
         <Card className="w-full max-w-md bg-[rgb(31,42,64)] text-white">
           <CardHeader>
@@ -79,210 +91,6 @@ export function LoginDash() {
             </Link>
           </CardFooter>
         </Card>
-      </div>
-      <header className="bg-[#F58025] text-white px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-50">
-        <div className="flex items-center gap-4">
-          <FlagIcon className="h-6 w-6 text-white" />
-          <h1 className="text-xl font-semibold text-white">Company Realtime Testing</h1>
-        </div>
-        <div className="flex items-center gap-4">
-          <Button className="rounded-full" size="icon" variant="ghost">
-            <CircleHelpIcon className="h-6 w-6 text-white" />
-            <span className="sr-only">Help</span>
-          </Button>
-        </div>
-      </header>
-      <div className="flex h-full">
-        <aside className="bg-[rgb(31,42,64)] w-[200px] p-6 flex flex-col gap-4 sticky top-[60px] left-0 h-[calc(100vh-60px)] z-40">
-          <div className="flex flex-col gap-4 sticky top-0">
-            <nav className="grid gap-2">
-              <Link
-                className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-[rgb(104,112,250)] hover:text-white text-[#adadad]"
-                href="#"
-              >
-                <HomeIcon className="h-4 w-4 text-[#adadad] hover:text-white" />
-                <span>Dashboard</span>
-              </Link>
-              <Link
-                className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-[rgb(104,112,250)] hover:text-white text-[#adadad]"
-                href="#"
-              >
-                <SettingsIcon className="h-4 w-4 text-[#adadad] hover:text-white" />
-                <span>Settings</span>
-              </Link>
-              <Link
-                className="flex items-center gap-3 rounded-md px-3 py-2 hover:bg-[rgb(104,112,250)] hover:text-white text-[#adadad]"
-                href="#"
-              >
-                <LogOutIcon className="h-4 w-4 text-[#adadad] hover:text-white" />
-                <span>Logout</span>
-              </Link>
-            </nav>
-          </div>
-        </aside>
-        <div className="px-6 py-4 flex flex-col gap-4 flex-1 bg-[rgb(20,27,45)]">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4 bg-[rgb(20,27,45)] text-[#ffffff] p-4">
-            <div className="flex flex-col items-start gap-4">
-              <div className="w-full sm:w-[400px]">
-                <Select className="w-full">
-                  <SelectTrigger className="w-full bg-[rgb(31,42,64)] border border-gray-200 border-[rgb(81,81,81)] hover:border-white dark:border-gray-800">
-                    <SelectValue className="text-[#adadad]" placeholder="Select a template" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-[rgb(18,18,18)] border border-gray-200 border-[rgb(81,81,81)] dark:border-gray-800">
-                    <SelectGroup>
-                      <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="template1">
-                        Template 1
-                      </SelectItem>
-                      <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="template2">
-                        Template 2
-                      </SelectItem>
-                      <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="template3">
-                        Template 3
-                      </SelectItem>
-                      <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="template4">
-                        Template 4
-                      </SelectItem>
-                      <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="template5">
-                        Template 5
-                      </SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-row items-center gap-2">
-                <Button
-                  className="text-[#adadad] bg-[rgb(31,42,64)] border border-gray-200 border-[rgb(81,81,81)] hover:bg-[rgb(104,112,250)] hover:text-white dark:border-gray-800"
-                  variant="outline"
-                >
-                  Prepare
-                </Button>
-                <Button className="text-[#adadad] bg-[rgb(31,42,64)] border border-gray-200 border-[rgb(81,81,81)] hover:bg-[rgb(104,112,250)] hover:text-white dark:border-gray-800">
-                  Execute
-                </Button>
-              </div>
-            </div>
-            <div className="flex flex-row items-end gap-4">
-              <div className="flex flex-col items-end gap-2">
-                <div className="flex flex-row items-center gap-4">
-                  <div className="flex flex-col justify-self-start w-[200px]">
-                    <Select className="w-full mb-2">
-                      <SelectTrigger className="w-full bg-[rgb(31,42,64)] border border-gray-200 border-[rgb(81,81,81)] hover:border-white dark:border-gray-800">
-                        <SelectValue className="text-[#adadad]" placeholder="Set Time for Session" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[rgb(18,18,18)] border border-gray-200 border-[rgb(81,81,81)] dark:border-gray-800">
-                        <SelectGroup>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="1">
-                            1
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="2">
-                            2
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="3">
-                            3
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="5">
-                            5
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="10">
-                            10
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="15">
-                            15
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="20">
-                            20
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="25">
-                            25
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="30">
-                            30
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="45">
-                            45
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="60">
-                            1 hour
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="75">
-                            75
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="90">
-                            90
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="105">
-                            105
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="120">
-                            2 hours
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="135">
-                            135
-                          </SelectItem>
-                          <SelectItem className="text-[#adadad] hover:bg-[rgba(255,255,255,0.08)]" value="150">
-                            150
-                          </SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[#ffffff] text-sm">Start Time</span>
-                    <span className="font-medium text-[#ffffff]">12:34:56</span>
-                  </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[#ffffff] text-sm">End Time</span>
-                    <span className="font-medium text-[#ffffff]">12:35:45</span>
-                  </div>
-                </div>
-                <div className="flex flex-col items-end">
-                  <span className="text-[#ffffff] text-sm">Time Elapsed</span>
-                  <span className="font-medium text-[#ffffff]">49 sec</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <Separator className="w-full border-[rgb(81,81,81)]" />
-          <main className="flex-1 p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 overflow-auto bg-[rgb(20,27,45)] text-[#ffffff]">
-            <div className="col-span-full flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Template 1</h2>
-              <span className="text-[#ffffff] text-sm">2024-04-29</span>
-            </div>
-            <Card className="bg-[rgb(31,42,64)] rounded-lg shadow-sm h-full border-0 overflow-hidden">
-              <CardHeader className="bg-[rgb(104,112,250)] p-4 rounded-t-lg">
-                <div className="text-lg font-medium text-[rgb(255,255,255)]">User 1234</div>
-              </CardHeader>
-              <CardContent className="p-4 space-y-2 h-full flex flex-col rounded-lg">
-                <div className="bg-[rgb(31,42,64)] p-2 rounded-md overflow-y-auto flex-1">
-                  <Table>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell className="text-[rgba(255,255,255)] border-b border-[rgb(81,81,81)]">
-                          12:34:56
-                        </TableCell>
-                        <TableCell className="text-[rgba(255,255,255)] border-b border-[rgb(81,81,81)]">3</TableCell>
-                        <TableCell className="text-[rgba(255,255,255)] border-b border-[rgb(81,81,81)]">
-                          {`
-                                              # Update a user
-                                              curl -X PUT -H "Content-Type: application/json" -d
-                                              'name: "Jane Doe", "email": "jane@example.com"}' 
-                                              http://api.example.com/users/1234
-                                            `}
-                        </TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell className="text-[rgba(255,255,255)] border-b border-[rgb(81,81,81)]">
-                          12:34:56
-                        </TableCell>
-                        <TableCell className="text-[rgba(255,255,255)] border-b border-[rgb(81,81,81)]">2</TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </div>
-              </CardContent>
-            </Card>
-          </main>
-        </div>
       </div>
     </div>
   )
