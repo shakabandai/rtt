@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import './App.css';
 
 interface TimerState {
   startTime: string | null;
@@ -11,36 +12,40 @@ const App: React.FC = () => {
   const [timer, setTimer] = useState<TimerState>({ startTime: null, endTime: null, elapsedTime: 0, duration: 60 });
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
 
+  useEffect(() => {
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [intervalId]);
+
   const startTimer = () => {
     const start = new Date();
-    setTimer({ ...timer, startTime: start.toLocaleTimeString(), elapsedTime: 0 });
+    const end = new Date(start.getTime() + timer.duration * 1000);
+    setTimer({
+      ...timer,
+      startTime: start.toLocaleTimeString(),
+      endTime: end.toLocaleTimeString(),
+      elapsedTime: timer.duration
+    });
 
     const id = setInterval(() => {
-      const now = new Date();
-      const elapsedTime = Math.floor((now.getTime() - start.getTime()) / 1000);
-      if (elapsedTime >= timer.duration) {
-        stopTimer();
-      } else {
-        setTimer(prevTimer => ({
-          ...prevTimer,
-          elapsedTime: elapsedTime
-        }));
-      }
+      setTimer(prevTimer => {
+        const newElapsedTime = prevTimer.elapsedTime - 1;
+        if (newElapsedTime <= 0) {
+          clearInterval(id);
+          return { ...prevTimer, elapsedTime: 0 };
+        }
+        return { ...prevTimer, elapsedTime: newElapsedTime };
+      });
     }, 1000);
 
     setIntervalId(id);
   };
 
-  const stopTimer = () => {
-    if (intervalId) {
-      clearInterval(intervalId);
-      const end = new Date();
-      setTimer(prevTimer => ({ ...prevTimer, endTime: end.toLocaleTimeString() }));
-    }
-  };
-
   const handleDurationChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setTimer({ ...timer, duration: parseInt(event.target.value, 10) });
+    setTimer({ ...timer, duration: parseInt(event.target.value, 10), elapsedTime: parseInt(event.target.value, 10) });
   };
 
   return (
@@ -55,10 +60,9 @@ const App: React.FC = () => {
           <option value={3600}>1 hour</option>
         </select>
         <button onClick={startTimer}>Start Timer</button>
-        <button onClick={stopTimer}>Stop Timer</button>
         <p>Start Time: {timer.startTime || 'Not started'}</p>
-        <p>End Time: {timer.endTime || 'Not stopped'}</p>
-        <p>Time Elapsed: {timer.elapsedTime} seconds</p>
+        <p>End Time: {timer.endTime || 'Not started'}</p>
+        <p>Time Remaining: {timer.elapsedTime} seconds</p>
       </header>
     </div>
   );
