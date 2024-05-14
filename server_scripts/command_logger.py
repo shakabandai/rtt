@@ -3,59 +3,59 @@ import subprocess
 import time
 import requests
 import os
+import threading
 
 API_ENDPOINT = "http://example.com/api/command"
 
 def setup_auditd(user_ids, test_mode):
     rules = []
-    if test_mode:
-        user_ids = [os.getuid()]  # Current user's UID for test mode
+    # Monitor all commands executed in any shell by specified users
     for user_id in user_ids:
-        # Set auditd rule to log all bash commands for each specified user
-        bash_rule = ["-a", "always,exit", "-F", "arch=b64", "-F", "euid={}".format(user_id), "-S", "execve"]
-        subprocess.run(["auditctl"] + bash_rule)
-        rules.append(bash_rule)
-
-        # Set auditd rule to log file accesses related to Vim for each specified user
-        vim_rule = ["-w", "/usr/bin/vim.basic", "-p", "x", "-k", "vim_commands_{}".format(user_id)]
-        subprocess.run(["auditctl"] + vim_rule)
-        rules.append(vim_rule)
-    
+        rule = ["-a", "always,exit", "-F", "arch=b64", "-F", "euid={}".format(user_id), "-S", "execve"]
+        subprocess.run(["auditctl"] + rule)
+        rules.append(rule)
     return rules
 
 def disable_auditd(rules):
-    # Disable all auditd rules set up for this session
     for rule in rules:
         subprocess.run(["auditctl", "-d"] + rule[1:])
 
-def send_command_to_api(command, session_id, test_mode):
-    if test_mode:
-        print(f"Test Mode: Command logged: {command}")
-    else:
-        # Send command along with the session ID to API endpoint
-        try:
-            response = requests.post(API_ENDPOINT, json={"command": command, "session_id": session_id})
+def batch_send(commands, session_id, test_mode):
+    if commands:
+        if test_mode:
+            for command in commands:
+                print(f"Test Mode: {command['timestamp']} - User executed command: {command['command']}")
+        else:
+            response = requests.post(API_ENDPOINT, json={"commands": commands, "session_id": session_id})
             if response.status_code == 200:
-                print(f"Command sent to API successfully: {command}")
+                print("Batch of commands sent to API successfully.")
             else:
-                print(f"Failed to send command to API: {response.status_code}")
-        except Exception as e:
-            print(f"Error sending command to API: {str(e)}")
+                print(f"Failed to send batch of commands to API: {response.status_code}")
+        commands.clear()
 
 def monitor_auditd_logs(duration, rules, session_id, test_mode):
-    # Monitor auditd logs for specified duration
+    commands = []
     start_time = time.time()
     end_time = start_time + duration
+    next_batch_time = time.time() + 0.5
+
     with subprocess.Popen(["tail", "-f", "/var/log/audit/audit.log"], stdout=subprocess.PIPE) as process:
         while time.time() < end_time:
+            if time.time() >= next_batch_time:
+                batch_send(commands, session_id, test_mode)
+                next_batch_time = time.time() + 0.5
+            
             line = process.stdout.readline()
             if line:
-                command = line.decode().strip()  # Extract the command from the audit log
-                send_command_to_api(command, session_id, test_mode)
+                timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+                command = line.decode().strip()  # Simplified parsing; needs real implementation
+                commands.append({"timestamp": timestamp, "command": command})
+
+    batch_send(commands, session_id, test_mode)  # Send remaining commands at the end
     disable_auditd(rules)
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description='Monitor specific user commands and send them to an API or log them locally based on mode.')
+    parser = argparse.ArgumentParser(description='Monitor and batch send executed commands to an API or log them locally based on mode.')
     parser.add_argument('session_id', type=str, help='Session ID for the API')
     parser.add_argument('user_ids', type=str, help='Comma-separated list of user IDs to monitor')
     parser.add_argument('duration', type=int, help='Duration to monitor in seconds')
@@ -64,9 +64,23 @@ def parse_arguments():
 
 if __name__ == "__main__":
     args = parse_arguments()
-    if args.test:
-        user_ids = [os.getuid()]  # Current user's UID for test mode
-    else:
-        user_ids = [int(uid.strip()) for uid in args.user_ids.split(',')]
+    user_ids = [int(uid.strip()) for uid in args.user_ids.split(',')]
     rules = setup_auditd(user_ids, args.test)
     monitor_auditd_logs(args.duration, rules, args.session_id, args.test)
+
+
+def test_command():
+    sudo ausearch -k exec-commands -ts today -sc execve -i | \
+awk '
+BEGIN { RS=""; FS="\n" } 
+/type=EXECVE/ { 
+    cmd = ""; 
+    for (i = 1; i <= NF; i++) { 
+        if ($i ~ /^a[0-9]+=.*$/) {
+            split($i, a, "="); 
+            gsub(/"/, "", a[2]); 
+            cmd = cmd " " a[2];
+        }
+    } 
+    if (cmd != "") print "Command executed:", cmd; 
+}'
