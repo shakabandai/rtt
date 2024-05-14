@@ -70,18 +70,14 @@ if __name__ == "__main__":
 
 
 def test_command():
-sudo ausearch -k exec-commands -ts today -sc execve -i | awk '
-BEGIN { RS=""; FS="\n" }
-/type=EXECVE/ {
-    print "DEBUG: Found EXECVE event";  # Debug output to confirm catching EXECVE
-    cmd = "";
-    for (i = 1; i <= NF; i++) {
-        print "DEBUG: Processing line:", $i;  # Output each line for verification
-        if ($i ~ /^a[0-9]+="[^"]*"$/) {
-            gsub(/^a[0-9]+="/, "", $i);
-            gsub(/"$/, "", $i);
-            cmd = (cmd == "" ? $i : cmd " " $i);
-        }
-    }
+sudo ausearch -ts today -ui user_id -i | grep 'type=EXECVE' | awk '
+BEGIN { cmd = "" }
+/^a[0-9]+=/ {
+    gsub(/^a[0-9]+="/, "", $0);
+    gsub(/"$/, "", $0);
+    cmd = (cmd == "" ? $0 : cmd " " $0);
+}
+/^$/ {
     if (cmd != "") print "Command executed:", cmd;
+    cmd = "";
 }'
