@@ -70,8 +70,13 @@ if __name__ == "__main__":
 
 
 def test_command():
-sudo ausearch -ts today -ui user_id -i | grep 'type=EXECVE' | awk '
+sudo ausearch -ts today -ui user_id -i | awk '
 BEGIN { cmd = "" }
+/type=EXECVE/ {
+    if (cmd != "") print "Command executed:", cmd;
+    cmd = "";  # Reset for the next command
+    next;  # Skip to the next record
+}
 /^a[0-9]+=/ {
     gsub(/^a[0-9]+="/, "", $0);
     gsub(/"$/, "", $0);
