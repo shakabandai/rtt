@@ -10,9 +10,27 @@ WEBSOCKET_URL = 'http://your.websocket.server'
 
 sio = socketio.Client()
 
+import os
+from datetime import datetime
+
 def setup_logging(session_id):
-    """Set up the logging environment."""
-    log_path = f"/var/log/{session_id}.log"
+    """Set up the logging environment with proper file naming."""
+    # Base path and initial log path
+    base_log_path = f"/var/log/{session_id}"
+    log_path = f"{base_log_path}.log"
+    
+    # Check if the log file already exists
+    if os.path.exists(log_path):
+        # If the file exists, append a timestamp to create a new file
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        log_path = f"{base_log_path}.{timestamp}.log"
+
+    # Create the log file
+    with open(log_path, 'w') as f:
+        # Just opening and closing to create the file
+        pass
+
+    # Update or create the command logging script to direct output to the new log path
     with open('/etc/profile.d/command_logger.sh', 'w') as f:
         f.write(
             f"""#!/bin/bash
@@ -23,6 +41,7 @@ PROMPT_COMMAND="log_command"
 """)
     subprocess.run(['chmod', '+x', '/etc/profile.d/command_logger.sh'])
     return log_path
+
 
 def remove_logging():
     """Remove logging script."""
